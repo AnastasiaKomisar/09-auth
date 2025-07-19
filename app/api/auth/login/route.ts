@@ -1,32 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
-import { api } from "../../api";
-import { cookies } from "next/headers";
-import { parse } from "cookie";
+import { NextResponse } from 'next/server';
+import { api } from '../../api';
+import { cookies } from 'next/headers';
+import { isAxiosError } from 'axios';
+import { logErrorResponse } from '../../_utils/utils';
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const apiRes = await api.post("auth/login", body);
+export async function POST() {
+  try {
+    const cookieStore = await cookies();
 
-  const cookieStore = await cookies();
-  const setCookie = apiRes.headers["set-cookie"];
+    const accessToken = cookieStore.get('accessToken')?.value;
+    const refreshToken = cookieStore.get('refreshToken')?.value;
 
-  if (setCookie) {
-    const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-    for (const cookieStr of cookieArray) {
-      const parsed = parse(cookieStr);
-      const options = {
-        expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-        path: parsed.Path,
-        maxAge: Number(parsed["Max-Age"]),
-      };
-      if (parsed.accessToken)
-        cookieStore.set("accessToken", parsed.accessToken, options);
-      if (parsed.refreshToken)
-        cookieStore.set("refreshToken", parsed.refreshToken, options);
+    await api.post('auth/logout', null, {
+      headers: {
+        Cookie: `accessToken=${accessToken}; refreshToken=${refreshToken}`,
+      },
+    });
+
+    cookieStore.delete('accessToken');
+    cookieStore.delete('refreshToken');
+
+    return NextResponse.json({ message: 'Logged out successfully' }, { status: 200 });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
+      return NextResponse.json(
+        { error: error.message, response: error.response?.data },
+        { status: error.status }
+      );
     }
-
-    return NextResponse.json(apiRes.data);
+    logErrorResponse({ message: (error as Error).message });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
-
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }

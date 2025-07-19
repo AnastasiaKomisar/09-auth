@@ -14,7 +14,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
     openGraph: {
       title: username,
       description: `Profile of ${username}`,
-      url: `https://09-auth.vercel.app/profile`, //!!!!
+      url: `https://09-auth-beta-orpin.vercel.app`,
       siteName: "NoteHub",
       images: [
         {
