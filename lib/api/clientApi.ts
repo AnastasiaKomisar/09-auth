@@ -67,10 +67,11 @@ export async function createNote({
     return res.data;
   } catch (error) {
     toast.error(error instanceof Error ? error.message : String(error));
+    throw error;
   }
 }
 
-export async function deleteNote(id: number): Promise<Note | undefined> {
+export async function deleteNote(id: string): Promise<Note | undefined> {
   try {
     const res = await nextServer.delete<Note>(`/notes/${id}`);
     return res.data;
@@ -99,7 +100,7 @@ export async function checkSession(): Promise<boolean> {
   }
 }
 
-export const getMe = async () => {
+export const getMe = async (): Promise<User> => {
  try {
     const res = await nextServer.get<User>("/users/me");
     return res.data;
@@ -108,9 +109,14 @@ export const getMe = async () => {
   }
 };
 
-export const registerUser = async (data: RegisterUserData) => {
-  const res= await nextServer.post('/auth/register', data);
-  return res.data;
+export const registerUser = async (data: RegisterUserData): Promise<User> => {
+  try {
+    const res = await nextServer.post<User>('/auth/register', data);
+    return res.data;
+  } catch (error) {
+    toast.error(error instanceof Error ? error.message : String(error));
+    throw error;
+  }
 };
 
 export const loginUser = async(data: RegisterUserData): Promise<User> => {
@@ -119,12 +125,7 @@ export const loginUser = async(data: RegisterUserData): Promise<User> => {
 };
 
 export const logoutUser = async (): Promise<void> => {
-  try {
     await nextServer.post("/auth/logout");
-  } catch (error) {
-    toast.error(error instanceof Error ? error.message : String(error));
-    throw error;
-  }
 };
 
 export const editUser = async ({username}: UpdateUserData): Promise<User> => {
