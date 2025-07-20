@@ -37,8 +37,8 @@ export async function fetchNotesServer(
   }
 }
 
-export async function fetchNoteByIdServer(noteId: number): Promise<Note | undefined> {
-   try {
+export async function fetchNoteByIdServer(noteId: string): Promise<Note | undefined> {
+  try {
     const cookieStore = await cookies();
     const res = await nextServer.get<Note>(`notes/${noteId}`, {
       headers: {

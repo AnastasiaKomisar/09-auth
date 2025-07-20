@@ -3,13 +3,13 @@ import { fetchNoteByIdServer } from '@/lib/api/serverApi';
 import NoteDetailsClient from "./NoteDetails.client";
 import { Metadata } from 'next';
 
-type Props = {
+interface Props {
   params: Promise<{ id: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const note = await fetchNoteByIdServer(Number(id));
+  const note = await fetchNoteByIdServer(id);
 
   if (!note) {
     return {
@@ -45,11 +45,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NoteDetailsPage({ params }: Props) {
   const { id } = await params;
   const queryClient = new QueryClient();
-  const parseId = Number(id);
 
   await queryClient.prefetchQuery({
-    queryKey: ['note', id],
-    queryFn: () => fetchNoteByIdServer(parseId),
+    queryKey: ['note',id],
+    queryFn: () => fetchNoteByIdServer(id),
   });
 
   return (

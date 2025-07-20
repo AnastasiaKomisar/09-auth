@@ -79,7 +79,7 @@ export async function deleteNote(id: number): Promise<Note | undefined> {
   }
 }
 
-export async function fetchNoteById(id: number): Promise<Note | undefined> {
+export async function fetchNoteById(id: string): Promise<Note | undefined> {
   try {
     const res = await nextServer.get<Note>(`/notes/${id}`);
     return res.data;

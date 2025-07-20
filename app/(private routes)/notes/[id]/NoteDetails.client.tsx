@@ -6,22 +6,18 @@ import { useParams } from 'next/navigation';
 import css from './NoteDetails.module.css';
 
 export default function NoteDetailsClient() {
-  const { id } = useParams();
-  const noteId = Number(id);
-  const isValidId = !isNaN(noteId) && noteId > 0;
+  const { id } = useParams<{id: string }>();
 
   const {
     data: note,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
-    enabled: isValidId,
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(id),
     refetchOnMount: false,
   });
 
-  if (!isValidId) return <p>Invalid note ID</p>;
   if (isLoading) return <p>Loading, please wait...</p>;
   if (isError || !note) return <p>Something went wrong.</p>;
 
