@@ -12,12 +12,11 @@ type Props = {
 
 export default async function NoteDetails ({ params }: Props) {
   const { id } = await params;
-  const parseId = Number(id);
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["note", parseId],
-    queryFn: () => fetchNoteByIdServer(parseId),
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteByIdServer(id),
   });
 
   return (
