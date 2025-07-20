@@ -23,6 +23,7 @@ export default function SignUpPage() {
       if (res) {
         setUser(res);
         router.push("/profile");
+        // router.refresh();
       } else {
         setError("Invalid email or password");
       }

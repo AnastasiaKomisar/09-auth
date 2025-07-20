@@ -45,7 +45,8 @@ export default function EditProfilePage() {
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <h1 className={css.formTitle}>Edit Profile</h1>
-
+      
+      {userImage ? (
         <Image
           src={userImage}
           alt="User Avatar"
@@ -53,6 +54,7 @@ export default function EditProfilePage() {
           height={120}
           className={css.avatar}
         />
+      ):(<div>No Image</div>)}
 
         <form className={css.profileInfo} onSubmit={handleSave}>
           <div className={css.usernameWrapper}>
@@ -61,7 +63,7 @@ export default function EditProfilePage() {
               id="username"
               type="text"
               className={css.input}
-              defaultValue={userName}
+              value={userName}
               onChange={handleChange}
             />
           </div>

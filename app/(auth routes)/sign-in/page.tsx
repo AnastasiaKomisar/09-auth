@@ -34,7 +34,11 @@ export default function SignInPage() {
 
   return (
     <main className={css.mainContent}>
-      <form className={css.form} action={handleSubmit}>
+      <form className={css.form} onSubmit={(e) => {
+                                  e.preventDefault();
+                                  const formData = new FormData(e.currentTarget);
+                                  handleSubmit(formData);
+                                }}>
         <h1 className={css.formTitle}>Sign in</h1>
 
         <div className={css.formGroup}>
